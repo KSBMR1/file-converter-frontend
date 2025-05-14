@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All-in-One File Converter - Convert Files Easily in Seconds</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <style>
+        /* Custom animations */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        .animate-slide-up {
+            animation: slideUp 0.8s ease-in-out;
+        }
+        .converter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .drop-zone {
+            border: 2px dashed #e5e7eb;
+            transition: all 0.3s;
+        }
+        .drop-zone:hover {
+            border-color: #4F46E5;
+        }
+        /* Dark mode transitions */
+        .dark-transition {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+        }
+        /* Hide scrollbar but allow scrolling */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+        /* Custom checkmark animation */
+        @keyframes checkmark {
+            0% { transform: scale(0); opacity: 0; }
+            50% { transform: scale(1.2); opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .checkmark-animation {
+            animation: checkmark 0.5s ease-in-out;
+        }
+    </style>
+</head>
+<body class="dark-transition bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-white">
+    <!-- Navigation -->
+    <nav class="dark-transition bg-white dark:bg-gray-800 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center">
+                    <div class="flex-shrink-0">
+                        <div class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">
+                            <i class="fas fa-exchange-alt mr-2"></i>FileConverter
+                        </div>
+                    </div>
+                    <div class="hidden md:block">
+                        <div class="ml-10 flex items-baseline space-x-4">
+                            <a href="#" class="dark-transition px-3 py-2 rounded-md text-sm font-medium text-indigo-600 dark:text-indigo-400">Home</a>
+                            <div class="relative group">
+                                <a href="#converters" class="dark-transition px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400">Converters</a>
+                                <div class="absolute z-10 hidden group-hover:block bg-white dark:bg-gray-800 shadow-lg rounded-md p-2 w-48">
+                                    <a href="#document-converters" class="dark-transition block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 hover:text-indigo-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-indigo-400 rounded-md">Document Converters</a>
+                                    <a href="#image-converters" class="dark-transition block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 hover:text-indigo-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-indigo-400 rounded-md">Image Converters</a>
+                                    <a href="#utility-tools" class="dark-transition block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-100 hover:text-indigo-600 dark:text-gray-300 dark:hover:bg-gray-700 dark:hover:text-indigo-400 rounded-md">Utility Tools</a>
+                                </div>
+                            </div>
+                            <a href="#about" class="dark-transition px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400">About</a>
+                            <a href="#contact" class="dark-transition px-3 py-2 rounded-md text-sm font-medium text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400">Contact</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <select class="dark-transition appearance-none rounded-md py-1 pl-3 pr-8 bg-gray-100 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option>English</option>
+                            <option>Español</option>
+                            <option>Français</option>
+                            <option>Deutsch</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <i class="fas fa-chevron-down text-xs"></i>
+                        </div>
+                    </div>
+                    <button id="dark-mode-toggle" class="dark-transition p-2 rounded-full text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none">
+                        <i id="theme-icon" class="fas fa-moon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div class="md:hidden dark-transition bg-white dark:bg-gray-800 border-t dark:border-gray-700" id="mobile-menu">
+            <div class="px-2 pt-2 pb-3 space-y-1">
+                <a href="#" class="block px-3 py-2 rounded-md text-base font-medium text-indigo-600 dark:text-indigo-400">Home</a>
+                <a href="#converters" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400">Converters</a>
+                <a href="#about" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400">About</a>
+                <a href="#contact" class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-indigo-600 dark:text-gray-300 dark:hover:text-indigo-400">Contact</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="relative dark-transition bg-gradient-to-b from-indigo-50 to-white dark:from-gray-900 dark:to-gray-800 py-16 md:py-24">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h1 class="animate-fade-in text-4xl md:text-5xl font-extrabold text-indigo-600 dark:text-indigo-400 leading-tight">
+                    All-in-One File Converter
+                </h1>
+                <p class="animate-slide-up mt-4 max-w-xl mx-auto text-xl text-gray-600 dark:text-gray-300">
+                    Convert files easily in seconds with our free online tools.
+                    No registration required.
+                </p>
+                <a href="#converters" class="animate-fade-in mt-8 inline-block px-8 py-3 text-base font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
+                    Start Converting
+                </a>
+            </div>
+            
+            <!-- Preview Icons -->
+            <div class="animate-slide-up mt-12 flex flex-wrap justify-center gap-4 md:gap-8">
+                <div class="flex items-center bg-white dark:bg-gray-700 px-4 py-2 rounded-full shadow-md">
+                    <i class="fas fa-file-pdf text-red-500 mr-2"></i>
+                    <i class="fas fa-exchange-alt text-gray-400 mx-2"></i>
+                    <i class="fas fa-file-word text-blue-600"></i>
+                </div>
+                <div class="flex items-center bg-white dark:bg-gray-700 px-4 py-2 rounded-full shadow-md">
+                    <i class="fas fa-file-image text-emerald-500 mr-2"></i>
+                    <i class="fas fa-exchange-alt text-gray-400 mx-2"></i>
+                    <i class="fas fa-file-pdf text-red-500"></i>
+                </div>
+                <div class="flex items-center bg-white dark:bg-gray-700 px-4 py-2 rounded-full shadow-md">
+                    <i class="far fa-image text-purple-500 mr-2"></i>
+                    <i class="fas fa-exchange-alt text-gray-400 mx-2"></i>
+                    <i class="fas fa-file-image text-emerald-500"></i>
+                </div>
+                <div class="flex items-center bg-white dark:bg-gray-700 px-4 py-2 rounded-full shadow-md">
+                    <i class="fas fa-file-pdf text-red-500 mr-2"></i>
+                    <i class="fas fa-compress-alt text-gray-400 mx-2"></i>
+                    <i class="fas fa-file-pdf text-red-500"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Converters Section -->
+    <section id="converters" class="dark-transition py-16 bg-white dark:bg-gray-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- Document Converters -->
+            <div id="document-converters" class="mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Document Converters</h2>
+                <div class="w-20 h-1 bg-indigo-600 dark:bg-indigo-400 mb-8"></div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- PDF to Word -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-indigo-100 dark:bg-indigo-900">
+                            <i class="fas fa-file-word text-3xl text-indigo-600 dark:text-indigo-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">PDF to Word</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Convert PDF documents to editable Word files</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                                <i class="fas fa-upload mr-2"></i>Upload PDF
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Word to PDF -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-red-100 dark:bg-red-900">
+                            <i class="fas fa-file-pdf text-3xl text-red-600 dark:text-red-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">Word to PDF</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Convert Word documents to PDF format</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                                <i class="fas fa-upload mr-2"></i>Upload Word
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- PDF to Excel -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-green-100 dark:bg-green-900">
+                            <i class="fas fa-file-excel text-3xl text-green-600 dark:text-green-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">PDF to Excel</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Convert PDF tables to Excel spreadsheets</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                                <i class="fas fa-upload mr-2"></i>Upload PDF
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Excel to PDF -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-red-100 dark:bg-red-900">
+                            <i class="fas fa-file-pdf text-3xl text-red-600 dark:text-red-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">Excel to PDF</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Convert Excel spreadsheets to PDF format</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                                <i class="fas fa-upload mr-2"></i>Upload Excel
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- PPT to PDF -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-red-100 dark:bg-red-900">
+                            <i class="fas fa-file-pdf text-3xl text-red-600 dark:text-red-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">PPT to PDF</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Convert PowerPoint presentations to PDF</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                                <i class="fas fa-upload mr-2"></i>Upload PPT
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- PDF to PPT -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-orange-100 dark:bg-orange-900">
+                            <i class="fas fa-file-powerpoint text-3xl text-orange-600 dark:text-orange-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">PDF to PPT</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Convert PDF to PowerPoint presentations</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                                <i class="fas fa-upload mr-2"></i>Upload PDF
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- PDF to Image -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-purple-100 dark:bg-purple-900">
+                            <i class="far fa-file-image text-3xl text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">PDF to Image</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Convert PDF pages to JPG or PNG images</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                                <i class="fas fa-upload mr-2"></i>Upload PDF
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Image to PDF -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-red-100 dark:bg-red-900">
+                            <i class="fas fa-file-pdf text-3xl text-red-600 dark:text-red-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">Image to PDF</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Convert JPG, PNG images to PDF format</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                                <i class="fas fa-upload mr-2"></i>Upload Images
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Image Converters -->
+            <div id="image-converters" class="mb-16">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Image Converters</h2>
+                <div class="w-20 h-1 bg-emerald-500 dark:bg-emerald-400 mb-8"></div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- JPG to PNG -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-emerald-100 dark:bg-emerald-900">
+                            <i class="far fa-file-image text-3xl text-emerald-600 dark:text-emerald-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">JPG to PNG</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Convert JPG images to PNG format</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors dark:bg-emerald-500 dark:hover:bg-emerald-600">
+                                <i class="fas fa-upload mr-2"></i>Upload JPG
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- PNG to JPG -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-emerald-100 dark:bg-emerald-900">
+                            <i class="far fa-file-image text-3xl text-emerald-600 dark:text-emerald-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">PNG to JPG</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Convert PNG images to JPG format</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors dark:bg-emerald-500 dark:hover:bg-emerald-600">
+                                <i class="fas fa-upload mr-2"></i>Upload PNG
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- HEIC to JPG/PNG -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-emerald-100 dark:bg-emerald-900">
+                            <i class="far fa-file-image text-3xl text-emerald-600 dark:text-emerald-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">HEIC to JPG/PNG</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Convert Apple HEIC photos to JPG or PNG</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors dark:bg-emerald-500 dark:hover:bg-emerald-600">
+                                <i class="fas fa-upload mr-2"></i>Upload HEIC
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- WEBP to JPG/PNG -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-emerald-100 dark:bg-emerald-900">
+                            <i class="far fa-file-image text-3xl text-emerald-600 dark:text-emerald-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">WEBP to JPG/PNG</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Convert WEBP images to JPG or PNG format</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors dark:bg-emerald-500 dark:hover:bg-emerald-600">
+                                <i class="fas fa-upload mr-2"></i>Upload WEBP
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- BMP to JPG/PNG -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-emerald-100 dark:bg-emerald-900">
+                            <i class="far fa-file-image text-3xl text-emerald-600 dark:text-emerald-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">BMP to JPG/PNG</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Convert BMP images to JPG or PNG format</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-emerald-600 text-white rounded-md hover:bg-emerald-700 transition-colors dark:bg-emerald-500 dark:hover:bg-emerald-600">
+                                <i class="fas fa-upload mr-2"></i>Upload BMP
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Utility Tools -->
+            <div id="utility-tools">
+                <h2 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Utility Tools</h2>
+                <div class="w-20 h-1 bg-purple-500 dark:bg-purple-400 mb-8"></div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    <!-- File Compressor -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-purple-100 dark:bg-purple-900">
+                            <i class="fas fa-compress-alt text-3xl text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">File Compressor</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Reduce PDF and image file sizes</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors dark:bg-purple-500 dark:hover:bg-purple-600">
+                                <i class="fas fa-upload mr-2"></i>Upload File
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- PDF Merger -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-purple-100 dark:bg-purple-900">
+                            <i class="fas fa-object-group text-3xl text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">PDF Merger</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Combine multiple PDF files into one</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors dark:bg-purple-500 dark:hover:bg-purple-600">
+                                <i class="fas fa-upload mr-2"></i>Upload PDFs
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- PDF Splitter -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-purple-100 dark:bg-purple-900">
+                            <i class="fas fa-cut text-3xl text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">PDF Splitter</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Split PDF into multiple files</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors dark:bg-purple-500 dark:hover:bg-purple-600">
+                                <i class="fas fa-upload mr-2"></i>Upload PDF
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- PDF Password Remover -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-purple-100 dark:bg-purple-900">
+                            <i class="fas fa-unlock-alt text-3xl text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">PDF Password Remover</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Remove password from PDF files</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors dark:bg-purple-500 dark:hover:bg-purple-600">
+                                <i class="fas fa-upload mr-2"></i>Upload PDF
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- PDF Page Rotator -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-purple-100 dark:bg-purple-900">
+                            <i class="fas fa-sync-alt text-3xl text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">PDF Page Rotator</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Rotate pages in PDF documents</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors dark:bg-purple-500 dark:hover:bg-purple-600">
+                                <i class="fas fa-upload mr-2"></i>Upload PDF
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Text to PDF -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-purple-100 dark:bg-purple-900">
+                            <i class="fas fa-file-alt text-3xl text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">Text to PDF</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Convert text or TXT files to PDF</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors dark:bg-purple-500 dark:hover:bg-purple-600">
+                                <i class="fas fa-upload mr-2"></i>Upload Text
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- PDF to Text -->
+                    <div class="converter-card dark-transition bg-white dark:bg-gray-700 rounded-lg shadow-md hover:shadow-xl p-6 transition-all duration-300">
+                        <div class="h-14 w-14 mx-auto rounded-full flex items-center justify-center bg-purple-100 dark:bg-purple-900">
+                            <i class="fas fa-font text-3xl text-purple-600 dark:text-purple-400"></i>
+                        </div>
+                        <h3 class="mt-4 text-xl font-semibold text-center text-gray-900 dark:text-white">PDF to Text</h3>
+                        <p class="mt-2 text-sm text-center text-gray-600 dark:text-gray-300">Extract text from PDF documents</p>
+                        <div class="mt-4 flex justify-center">
+                            <button class="px-4 py-2 bg-purple-600 text-white rounded-md hover:bg-purple-700 transition-colors dark:bg-purple-500 dark:hover:bg-purple-600">
+                                <i class="fas fa-upload mr-2"></i>Upload PDF
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Converter Demo -->
+    <section class="dark-transition bg-gray-50 dark:bg-gray-900 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">How It Works</h2>
+            <div class="w-20 h-1 bg-indigo-600 dark:bg-indigo-400 mx-auto mb-8"></div>
+            <p class="text-center text-lg text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-12">
+                Converting files is simple and secure with our easy 3-step process
+            </p>
+            
+            <div class="featured-converter dark-transition bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 max-w-4xl mx-auto">
+                <h3 class="text-2xl font-bold text-center text-gray-900 dark:text-white mb-8">PDF to Word Converter</h3>
+                
+                <!-- Steps -->
+                <div class="flex flex-col md:flex-row justify-between mb-8">
+                    <div class="flex-1 text-center p-4">
+                        <div class="h-16 w-16 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">1</span>
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Upload PDF</h4>
+                        <p class="text-gray-600 dark:text-gray-400">Select or drag & drop your PDF file</p>
+                    </div>
+                    
+                    <div class="flex-1 text-center p-4">
+                        <div class="h-16 w-16 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">2</span>
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Convert</h4>
+                        <p class="text-gray-600 dark:text-gray-400">Wait for the conversion to complete</p>
+                    </div>
+                    
+                    <div class="flex-1 text-center p-4">
+                        <div class="h-16 w-16 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center mx-auto mb-4">
+                            <span class="text-2xl font-bold text-indigo-600 dark:text-indigo-400">3</span>
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Download</h4>
+                        <p class="text-gray-600 dark:text-gray-400">Get your converted Word document</p>
+                    </div>
+                </div>
+                
+                <!-- Upload Area -->
+                <div class="drop-zone dark-transition bg-gray-50 dark:bg-gray-700 rounded-lg p-8 text-center">
+                    <div class="mx-auto w-20 h-20 mb-4">
+                        <i class="fas fa-cloud-upload-alt text-6xl text-indigo-400"></i>
+                    </div>
+                    <h4 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Drop your PDF file here</h4>
+                    <p class="text-gray-600 dark:text-gray-400 mb-4">or click to browse from your computer</p>
+                    <button class="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                        <i class="fas fa-file-upload mr-2"></i>Choose PDF File
+                    </button>
+                    <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">Maximum file size: 100MB</p>
+                </div>
+                
+                <!-- After Upload Preview (Initially Hidden) -->
+                <div class="file-preview hidden dark-transition bg-gray-50 dark:bg-gray-700 rounded-lg p-6 mt-6">
+                    <div class="flex items-center">
+                        <div class="file-icon mr-4">
+                            <i class="fas fa-file-pdf text-4xl text-red-600"></i>
+                        </div>
+                        <div class="file-info flex-grow">
+                            <h5 class="text-lg font-medium text-gray-900 dark:text-white">document.pdf</h5>
+                            <p class="text-sm text-gray-600 dark:text-gray-400">2.4 MB</p>
+                        </div>
+                        <div class="file-actions">
+                            <button class="text-red-600 hover:text-red-700">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-6 flex justify-center">
+                        <button class="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                            <i class="fas fa-sync-alt mr-2"></i>Convert to Word
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="dark-transition bg-white dark:bg-gray-800 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">Why Choose Our Converters</h2>
+            <div class="w-20 h-1 bg-indigo-600 dark:bg-indigo-400 mx-auto mb-8"></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-12">
+                <div class="dark-transition bg-gray-50 dark:bg-gray-700 p-6 rounded-lg text-center">
+                    <div class="h-16 w-16 mx-auto rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center mb-4">
+                        <i class="fas fa-shield-alt text-2xl text-indigo-600 dark:text-indigo-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Secure Processing</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Your files are encrypted and automatically deleted after 30 minutes</p>
+                </div>
+                
+                <div class="dark-transition bg-gray-50 dark:bg-gray-700 p-6 rounded-lg text-center">
+                    <div class="h-16 w-16 mx-auto rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center mb-4">
+                        <i class="fas fa-bolt text-2xl text-indigo-600 dark:text-indigo-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Fast Conversion</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Convert files within seconds with our optimized algorithms</p>
+                </div>
+                
+                <div class="dark-transition bg-gray-50 dark:bg-gray-700 p-6 rounded-lg text-center">
+                    <div class="h-16 w-16 mx-auto rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center mb-4">
+                        <i class="fas fa-check-circle text-2xl text-indigo-600 dark:text-indigo-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">High Quality</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Maintain original formatting, images, and layout quality</p>
+                </div>
+                
+                <div class="dark-transition bg-gray-50 dark:bg-gray-700 p-6 rounded-lg text-center">
+                    <div class="h-16 w-16 mx-auto rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center mb-4">
+                        <i class="fas fa-globe text-2xl text-indigo-600 dark:text-indigo-400"></i>
+                    </div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Cloud-Based</h3>
+                    <p class="text-gray-600 dark:text-gray-300">No software installation needed, works on all devices and browsers</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="dark-transition bg-gray-50 dark:bg-gray-900 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">What Users Say</h2>
+            <div class="w-20 h-1 bg-indigo-600 dark:bg-indigo-400 mx-auto mb-8"></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+                <div class="dark-transition bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="ml-2 text-gray-600 dark:text-gray-300">5.0</span>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">"This converter saved me so much time! I needed to convert multiple PDFs to Word for editing, and it maintained all the formatting perfectly."</p>
+                    <div class="flex items-center">
+                        <div class="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
+                            <span class="text-indigo-600 dark:text-indigo-400 font-semibold">JD</span>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-semibold text-gray-900 dark:text-white">John Doe</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Marketing Manager</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dark-transition bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span class="ml-2 text-gray-600 dark:text-gray-300">5.0</span>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">"I use the image converters frequently for my website. The WEBP to JPG converter is fantastic and keeps the quality intact. Highly recommended!"</p>
+                    <div class="flex items-center">
+                        <div class="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
+                            <span class="text-indigo-600 dark:text-indigo-400 font-semibold">SM</span>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-semibold text-gray-900 dark:text-white">Sarah Miller</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Web Developer</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="dark-transition bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                    <div class="flex items-center mb-4">
+                        <div class="text-yellow-400">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                        </div>
+                        <span class="ml-2 text-gray-600 dark:text-gray-300">4.5</span>
+                    </div>
+                    <p class="text-gray-600 dark:text-gray-300 mb-4">"The PDF merging tool is a lifesaver for combining reports. Fast, reliable, and the interface is incredibly user-friendly. Great service overall!"</p>
+                    <div class="flex items-center">
+                        <div class="h-10 w-10 rounded-full bg-indigo-100 dark:bg-indigo-900 flex items-center justify-center">
+                            <span class="text-indigo-600 dark:text-indigo-400 font-semibold">AJ</span>
+                        </div>
+                        <div class="ml-3">
+                            <h4 class="text-sm font-semibold text-gray-900 dark:text-white">Alex Johnson</h4>
+                            <p class="text-xs text-gray-500 dark:text-gray-400">Financial Analyst</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="about" class="dark-transition bg-white dark:bg-gray-800 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">Frequently Asked Questions</h2>
+            <div class="w-20 h-1 bg-indigo-600 dark:bg-indigo-400 mx-auto mb-8"></div>
+            
+            <div class="max-w-3xl mx-auto mt-12">
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Is this service completely free?</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Yes, all our basic conversion tools are completely free to use. We offer premium options for high-volume users or those needing advanced features.</p>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">How is my data security ensured?</h3>
+                    <p class="text-gray-600 dark:text-gray-300">All uploaded files are encrypted during transmission. We automatically delete all files from our servers after 30 minutes, and no file content is ever accessed by humans.</p>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">What's the maximum file size for conversion?</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Free users can convert files up to 100MB in size. Premium users get increased limits up to 500MB per file.</p>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Will my document formatting be preserved?</h3>
+                    <p class="text-gray-600 dark:text-gray-300">We strive to maintain the original formatting as closely as possible. Complex layouts, custom fonts, or specialized formatting may have minor differences in the converted file.</p>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Can I convert multiple files at once?</h3>
+                    <p class="text-gray-600 dark:text-gray-300">Yes, free users can convert up to 3 files simultaneously. Premium users enjoy batch conversion for up to 50 files at once.</p>
+                </div>
+                
+                <div>
+                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Do I need to install any software?</h3>
+                    <p class="text-gray-600 dark:text-gray-300">No, our service is entirely web-based. You only need a modern web browser to use all our conversion tools.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="dark-transition bg-gray-50 dark:bg-gray-900 py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 class="text-3xl font-bold text-center text-gray-900 dark:text-white mb-2">Get In Touch</h2>
+            <div class="w-20 h-1 bg-indigo-600 dark:bg-indigo-400 mx-auto mb-8"></div>
+            
+            <div class="max-w-3xl mx-auto mt-12 dark-transition bg-white dark:bg-gray-800 rounded-lg shadow-md p-8">
+                <form>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Your Name</label>
+                            <input type="text" id="name" name="name" class="dark-transition w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email Address</label>
+                            <input type="email" id="email" name="email" class="dark-transition w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white">
+                        </div>
+                    </div>
+                    <div class="mb-6">
+                        <label for="subject" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Subject</label>
+                        <input type="text" id="subject" name="subject" class="dark-transition w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white">
+                    </div>
+                    <div class="mb-6">
+                        <label for="message" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Message</label>
+                        <textarea id="message" name="message" rows="4" class="dark-transition w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-700 dark:text-white"></textarea>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600">
+                            <i class="fas fa-paper-plane mr-2"></i>Send Message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="dark-transition bg-gray-800 dark:bg-gray-900 text-white py-12">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-4">
+                        <i class="fas fa-exchange-alt mr-2"></i>FileConverter
+                    </h3>
+                    <p class="text-gray-300 mb-4">Convert files easily in seconds with our free online tools.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-twitter"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                            <i class="fab fa-linkedin-in"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Document Converters</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white transition-colors">PDF to Word</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Word to PDF</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">PDF to Excel</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">Excel to PDF</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">PPT to PDF</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Image Converters</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white transition-colors">JPG to PNG</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">PNG to JPG</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">HEIC to JPG</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">WEBP to JPG</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">BMP to JPG</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Other Tools</h4>
+                    <ul class="space-y-2 text-gray-300">
+                        <li><a href="#" class="hover:text-white transition-colors">File Compressor</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">PDF Merger</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">PDF Splitter</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">PDF Password Remover</a></li>
+                        <li><a href="#" class="hover:text-white transition-colors">PDF Page Rotator</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <div class="text-gray-300 text-sm mb-4 md:mb-0">
+                    © 2023 FileConverter. All rights reserved.
+                </div>
+                <div class="flex space-x-6 text-sm text-gray-300">
+                    <a href="#" class="hover:text-white transition-colors">Privacy Policy</a>
+                    <a href="#" class="hover:text-white transition-colors">Terms of Service</a>
+                    <a href="#" class="hover:text-white transition-colors">Cookie Policy</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Dark mode toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const darkModeToggle = document.getElementById('dark-mode-toggle');
+            const themeIcon = document.getElementById('theme-icon');
+            
+            // Check for saved theme preference or use OS preference
+            const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+            const currentTheme = localStorage.getItem('theme');
+            
+            if (currentTheme === 'dark' || (!currentTheme && prefersDarkScheme.matches)) {
+                document.documentElement.classList.add('dark');
+                themeIcon.classList.remove('fa-moon');
+                themeIcon.classList.add('fa-sun');
+            } else {
+                document.documentElement.classList.remove('dark');
+                themeIcon.classList.remove('fa-sun');
+                themeIcon.classList.add('fa-moon');
+            }
+            
+            // Toggle theme
+            darkModeToggle.addEventListener('click', function() {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('theme', 'light');
+                    themeIcon.classList.remove('fa-sun');
+                    themeIcon.classList.add('fa-moon');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('theme', 'dark');
+                    themeIcon.classList.remove('fa-moon');
+                    themeIcon.classList.add('fa-sun');
+                }
+            });
+            
+            // Mobile menu toggle
+            const mobileMenuBtn = document.createElement('button');
+            mobileMenuBtn.className = 'md:hidden p-2 rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none';
+            mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+            
+            const navbarRight = document.querySelector('.flex.items-center.space-x-4');
+            navbarRight.parentNode.insertBefore(mobileMenuBtn, navbarRight);
+            
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.style.display = 'none';
+            
+            mobileMenuBtn.addEventListener('click', function() {
+                if (mobileMenu.style.display === 'none') {
+                    mobileMenu.style.display = 'block';
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-times"></i>';
+                } else {
+                    mobileMenu.style.display = 'none';
+                    mobileMenuBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    window.scrollTo({
+                        top: target.offsetTop - 80, // Offset for fixed header
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+        
+        // Simulated file upload functionality
+        document.querySelectorAll('.drop-zone').forEach(dropZone => {
+            dropZone.addEventListener('click', function() {
+                // Simulate file selection
+                console.log('File selector would open here');
+            });
+        });
+    </script>
+</body>
+</html>
