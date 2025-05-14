@@ -903,24 +903,84 @@
       input.type = 'file';
       input.onchange = async (e) => {
         const file = e.target.files[0];
+        if (!file) return;
+
         const formData = new FormData();
         formData.append('file', file);
+
         try {
-          let url = '';
-          if (file.type === 'application/pdf') {
-            url = 'https://file-converter-backend.onrender.com/api/convert/pdf/to-word';
-          } else if (file.type === 'image/jpeg') {
-            url = 'https://file-converter-backend.onrender.com/api/convert/image/jpg-to-png';
-          }
-          const response = await fetch(url, { method: 'POST', body: formData });
-          const data = await response.json();
-          if (data.success) {
-            window.location.href = 'https://file-converter-backend.onrender.com' + data.downloadUrl;
+          // Determine conversion type based on the parent card's title
+          const conversionType = dropZone.parentElement.querySelector('h3').textContent;
+          let url = 'https://file-converter-backend-iakh.onrender.com/api/convert/';
+          let expectedType = '';
+
+          // Set URL and expected file type based on conversion type
+          if (conversionType === 'PDF to Word') {
+            url += 'pdf/to-word';
+            expectedType = 'application/pdf';
+          } else if (conversionType === 'JPG to PNG') {
+            url += 'image/jpg-to-png';
+            expectedType = 'image/jpeg';
           } else {
-            alert(data.message);
+            alert('This conversion type is not yet supported.');
+            return;
+          }
+
+          // Validate file type
+          if (file.type !== expectedType) {
+            alert(`Please upload a ${expectedType === 'application/pdf' ? 'PDF' : 'JPG'} file for ${conversionType}.`);
+            return;
+          }
+
+          // Show loading state
+          dropZone.innerHTML = '<p class="text-gray-600 dark:text-gray-300">Converting...</p>';
+
+          // Send file to backend
+          const response = await fetch(url, {
+            method: 'POST',
+            body: formData,
+          });
+          const data = await response.json();
+
+          // Reset drop zone
+          dropZone.innerHTML = `
+            <div class="mx-auto w-20 h-20 mb-4">
+              <i class="fas fa-cloud-upload-alt text-6xl text-indigo-400"></i>
+            </div>
+            <h4 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Drop your ${expectedType === 'application/pdf' ? 'PDF' : 'JPG'} file here</h4>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">or click to browse from your computer</p>
+            <button class="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600">
+              <i class="fas fa-file-upload mr-2"></i>Choose ${expectedType === 'application/pdf' ? 'PDF' : 'JPG'} File
+            </button>
+            <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">Maximum file size: 100MB</p>
+          `;
+
+          // Handle response
+          if (data.success) {
+            const downloadUrl = `https://file-converter-backend-iakh.onrender.com${data.downloadUrl}`;
+            const link = document.createElement('a');
+            link.href = downloadUrl;
+            link.download = ''; // Browser will use the server's filename
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            alert('Conversion successful! File downloaded.');
+          } else {
+            alert(data.message || 'Conversion failed. Please try again.');
           }
         } catch (err) {
-          alert('Error during conversion');
+          dropZone.innerHTML = `
+            <div class="mx-auto w-20 h-20 mb-4">
+              <i class="fas fa-cloud-upload-alt text-6xl text-indigo-400"></i>
+            </div>
+            <h4 class="text-xl font-semibold text-gray-900 dark:text-white mb-2">Drop your file here</h4>
+            <p class="text-gray-600 dark:text-gray-300 mb-4">or click to browse from your computer</p>
+            <button class="px-6 py-3 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors dark:bg-indigo-500 dark:hover:bg-indigo-600">
+              <i class="fas fa-file-upload mr-2"></i>Choose File
+            </button>
+            <p class="mt-4 text-sm text-gray-500 dark:text-gray-400">Maximum file size: 100MB</p>
+          `;
+          alert('Error during conversion: ' + err.message);
         }
       };
       input.click();
