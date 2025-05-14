@@ -890,5 +890,45 @@
             });
         });
     </script>
+
+
+
+
+
+
+    <script>
+  document.querySelectorAll('.drop-zone').forEach(dropZone => {
+    dropZone.addEventListener('click', () => {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.onchange = async (e) => {
+        const file = e.target.files[0];
+        const formData = new FormData();
+        formData.append('file', file);
+        try {
+          let url = '';
+          if (file.type === 'application/pdf') {
+            url = 'https://file-converter-backend.onrender.com/api/convert/pdf/to-word';
+          } else if (file.type === 'image/jpeg') {
+            url = 'https://file-converter-backend.onrender.com/api/convert/image/jpg-to-png';
+          }
+          const response = await fetch(url, { method: 'POST', body: formData });
+          const data = await response.json();
+          if (data.success) {
+            window.location.href = 'https://file-converter-backend.onrender.com' + data.downloadUrl;
+          } else {
+            alert(data.message);
+          }
+        } catch (err) {
+          alert('Error during conversion');
+        }
+      };
+      input.click();
+    });
+  });
+</script>
+
+
+    
 </body>
 </html>
