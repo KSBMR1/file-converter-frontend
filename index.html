@@ -918,6 +918,14 @@
           if (conversionType === 'PDF to Word') {
             url += 'pdf/to-word';
             expectedType = 'application/pdf';
+              else if (conversionType === 'Word to PDF') {
+  url += 'word/to-pdf';
+  expectedType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+}
+            else if (conversionType === 'PNG to JPG') {
+  url += 'image/png-to-jpg';
+  expectedType = 'image/png';
+}
           } else if (conversionType === 'JPG to PNG') {
             url += 'image/jpg-to-png';
             expectedType = 'image/jpeg';
